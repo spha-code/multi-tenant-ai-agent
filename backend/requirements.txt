@@ -1,0 +1,7 @@
+# FastAPI backend dependencies (pinned loosely; regenerate with pip freeze)
+fastapi==0.115.*          # web framework
+httpx==0.27.*             # HTTP client (fetches JWKS from Keycloak)
+uvicorn[standard]==0.32.* # ASGI server
+psycopg[binary,pool]==3.2.* # Postgres driver + connection pool
+pyjwt==2.9.*              # JWT decode/signature check
+cryptography==43.*        # RSA keys used by PyJWT to verify signatures

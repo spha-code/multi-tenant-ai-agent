@@ -58,5 +58,26 @@ services:
       postgres:
         condition: service_healthy
 
+  # FastAPI backend: validates tokens, scopes every query to the caller's tenant
+  backend:
+    build: ./backend
+    container_name: app_backend
+    environment:
+      APP_DB_NAME: ${APP_DB_NAME}
+      APP_DB_HOST: postgres          # docker-network hostname (NOT localhost)
+      APP_DB_PORT: ${APP_DB_PORT}
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+      # what tokens claim as issuer (URL as the user's browser sees it)
+      KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER}
+      # where we fetch public keys (docker-network hostname)
+      KEYCLOAK_JWKS_URL: ${KEYCLOAK_JWKS_URL}
+      TOKEN_AUDIENCE: ${TOKEN_AUDIENCE}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
