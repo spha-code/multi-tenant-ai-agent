@@ -26,3 +26,10 @@ TOKEN_AUDIENCE = os.environ.get("TOKEN_AUDIENCE", "cloud-portal-backend")
 
 # How long (seconds) we cache Keycloak's public keys before refreshing.
 JWKS_CACHE_TTL = int(os.environ.get("JWKS_CACHE_TTL", "300"))
+
+# ---- CORS (browser origins allowed to call the API cross-origin) ----
+CORS_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("CORS_ORIGINS", "http://localhost:5173").split(",")
+    if origin.strip()
+]
