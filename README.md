@@ -50,8 +50,31 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
 | localhost:5432      | Postgres | database protocol (Postgres wire protocol)   |
 | localhost:8080      | Keycloak | Administration Console (HTTP)                |
 | localhost:5050      | pgAdmin  | web UI for browsing Postgres                 |
+| localhost:8000      | FastAPI  | backend API (token check + tenant scope)     |
+| localhost:3000      | Next.js  | frontend (later)                             |
 
-New services get added here as they land (FastAPI ≈ 8000, Next.js ≈ 3000).
+## Backend API (step 4)
+
+Endpoints (all require `Authorization: Bearer <token>`):
+
+| Method | Path         | Purpose                                                    |
+|--------|--------------|------------------------------------------------------------|
+| GET    | `/me`        | identity summary (user, email, tenant from org claim)      |
+| GET/POST | `/customers` | list / create customers of the caller's tenant only       |
+| GET/POST | `/orders`    | list / create orders of the caller's tenant only          |
+
+Quick manual test (dev tokens for now, minted via the `poc-client` password grant):
+
+```bash
+TOKEN=$(curl -s -X POST "http://localhost:8080/realms/ai-portal/protocol/openid-connect/token" \
+  -d "grant_type=password" -d "client_id=poc-client" \
+  -d "username=alice@company-a.com" -d "password=123" -d "scope=openid" | jq -r .access_token)
+
+curl -s http://localhost:8000/customers -H "Authorization: Bearer $TOKEN"
+```
+
+Bob (`bob@company-b.com`, same password) gets Company B rows from the same URL —
+the tenant comes from the token, so the endpoint has zero tenant logic.
 
 pgAdmin first-time setup: register the server with host `postgres`
 (the Docker service name — *not* `localhost`), port `5432`,
@@ -62,8 +85,8 @@ user `keycloak`, password from `.env`.
 
 - [x] Step 1: Keycloak + Postgres via Docker Compose
 - [x] Step 2: Organizations (Company A / B) + test users + app clients in Keycloak
-- [ ] Step 3: App database with tenant_id + Row-Level Security
-- [ ] Step 4: FastAPI backend validating tokens, applying tenant scope
+- [x] Step 3: App database with tenant_id + Row-Level Security
+- [x] Step 4: FastAPI backend validating tokens, applying tenant scope
 - [ ] Step 5: Next.js frontend with per-company branding
 - [ ] Step 6: Claude AI agent with tenant-scoped tools
 - [ ] Step 7: Automated cross-tenant isolation tests
