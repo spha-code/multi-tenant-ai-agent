@@ -43,6 +43,21 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
 3. Verify Keycloak is up: open http://localhost:8080 and log into the
    Administration Console (admin / admin from `.env`).
 
+## Services & ports
+
+| URL                 | Service  | Notes                                        |
+|---------------------|----------|----------------------------------------------|
+| localhost:5432      | Postgres | database protocol (Postgres wire protocol)   |
+| localhost:8080      | Keycloak | Administration Console (HTTP)                |
+| localhost:5050      | pgAdmin  | web UI for browsing Postgres                 |
+
+New services get added here as they land (FastAPI ≈ 8000, Next.js ≈ 3000).
+
+pgAdmin first-time setup: register the server with host `postgres`
+(the Docker service name — *not* `localhost`), port `5432`,
+user `keycloak`, password from `.env`.
+
+
 ## Roadmap
 
 - [x] Step 1: Keycloak + Postgres via Docker Compose
