@@ -1,8 +1,9 @@
 # Frontend Build Plan — multi-tenant-ai-agent
 
-> **Status:** Phases 1–4 implemented on branch `feat/frontend-portal`
-> (commit `aa1f728`). Phase 5 is a runtime verification, and the Keycloak
+> **Status:** Phases 1–4 implemented and merged into `main` (PR #6).
+> Phase 5 is a runtime verification, and the Keycloak
 > public client is the one manual setup step remaining.
+> Next: **agentic chat composer** plan below.
 
 A web frontend ("Cloud Portal") for the existing FastAPI backend: Keycloak OIDC
 login, tenant-scoped Customers and Orders, and proof that each user only sees
@@ -77,12 +78,73 @@ their own organization's data.
 
 ## Later implementation (tracked, not forgotten)
 
-- **AI agent chat UI** — streaming chat panel (SSE, markdown + citations);
-  requires the backend `POST /agent` streaming endpoint first (pgvector is
-  already in the stack, pointing that way)
 - **Production build** — nginx-served static build (`vite build`) as a second
   Dockerfile target
 - **Tests** — component and E2E coverage
+
+## Active next plan — agentic chat composer
+
+> **Status:** planned, not started. Lives on top of the existing
+> Bearer-token → tenant → RLS pipeline, so the agent inherits tenant
+> isolation for free: every tool call runs inside `tenant_session()`.
+> pgvector is already provisioned but unused — this plan is what will use it.
+
+### Concept
+
+A chat composer in the portal where the user talks to an agent that can see
+and act within **its own tenant's data**:
+
+```text
+"What did Raj order last month?"          → query_orders tool (read, auto-approved)
+"Create an order for Lena, racking, 9k"   → create_order tool (write, confirm card)
+```
+
+The agent NEVER asks for or sees a tenant: it is the principal's tenant,
+derived from the Keycloak `organization` claim exactly like every endpoint.
+
+### Backend — `POST /agent/chat` (SSE)
+
+- **Streaming**: FastAPI async generator; SSE separates *answer tokens* from
+  *typed activity events* (tool calls, errors) so the FE renders them
+  differently
+- **Agent loop**: small tool loop, not a monolith:
+  `query_customers`, `query_orders`, `create_order` (reuses existing endpoint
+  semantics), each wrapped in `tenant_session(principal.tenant_id)`
+- **Auth**: unchanged — same `get_principal` dependency
+- **Conversation persistence**: `threads` + `messages` tables, RLS-tenant-scoped
+- **Memory / RAG**: `embeddings` table (tenant_id + same RLS pattern) searched
+  with pgvector via `set_config('app.tenant_id')` — tenant-scoped knowledge,
+  no leakage
+
+### Frontend — the composer
+
+- New route `/chat`: message list with **streaming markdown**, working
+  indicator, stop button
+- Composer: send, queue-while-working, multi-line input
+- **Tool activity rendering**: collapsed chips per tool call, expandable
+- **Confirm-before-act**: write tools (e.g. `create_order`) render a card in
+  the chat — "Create this order? [Confirm] / [Cancel]"
+- Threads list in the sidebar, history loaded by `thread_id`
+
+### Open decisions (made during implementation)
+
+| Decision | Default until changed |
+|---|---|
+| LLM provider & key | env var, globally set; per-tenant `provider/model` in `tenant_settings` later |
+| Read vs. write approval | reads auto-approved; writes require the confirm card |
+| Thread retention | keep forever; compaction is a later problem |
+| Errors | SSE `error` events rendered inline with a retry button |
+
+### Phases (each step demoable on its own)
+
+1. **BE** — `/agent/chat` with one read tool (`query_orders`) + SSE stream
+   (curl-testable)
+2. **FE** — minimal composer that receives the stream; render tokens + one
+   activity chip
+3. **BE+FE** — `create_order` tool with the confirm-card flow
+4. **DB+BE+FE** — threads persistence + sidebar thread list
+5. **DB+BE** — pgvector embeddings table (RLS) + RAG retrieval in the loop
+6. **Polish** — stop/queue, markdown theming, mobile layout
 
 ## Running after build
 
