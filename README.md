@@ -7,11 +7,11 @@ Multi-tenant AI agent. Each user's agent can only access their own company's dat
 | Layer      | Tech                                   |
 |------------|----------------------------------------|
 | Auth       | Keycloak 26.3 (one realm, Organizations per company) |
-| Database   | PostgreSQL 16 (tenant_id + Row-Level Security) |
+| Database   | PostgreSQL 16 (tenant_id + Row-Level Security, pgvector provisioned) |
 | Backend    | FastAPI (Python)                       |
-| Frontend   | Next.js                                |
-| AI agent   | Claude API with company-filtered tools |
-| Local dev  | Docker Compose                         |
+| Frontend   | Vite + React + TypeScript (oidc-client-ts) |
+| AI agent   | planned — agentic chat composer (see [PLAN.md](PLAN.md)) |
+| Local dev  | Docker Compose (frontend runs `npm run dev` in-container) |
 
 ## How the multi-tenancy works
 
@@ -34,7 +34,7 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
    cp .env.example .env
    ```
 
-2. Start the infrastructure:
+2. Start everything (Postgres, Keycloak, pgAdmin, backend **and** frontend):
 
    ```bash
    docker compose up -d
@@ -42,6 +42,21 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
 
 3. Verify Keycloak is up: open http://localhost:8080 and log into the
    Administration Console (admin / admin from `.env`).
+
+4. **One-time Keycloak setup for the frontend** (public client for the
+   browser app, PKCE flow):
+
+   - **Clients → Create client**: `cloud-portal-frontend`,
+     authentication OFF (public), standard flow ON
+   - Valid redirect URIs: `http://localhost:5173/*`;
+     web origins: `http://localhost:5173`
+   - **Audience mapper** (required, or the backend rejects every token):
+     Clients → `cloud-portal-frontend` → Client scopes →
+     `cloud-portal-frontend-dedicated` → Mappers → Add →
+     configuration → Audience → Included Client Audience:
+     `cloud-portal-backend`
+
+5. Open the portal at http://localhost:5173 and log in with an organization member.
 
 ## Services & ports
 
@@ -51,7 +66,7 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
 | localhost:8080      | Keycloak | Administration Console (HTTP)                |
 | localhost:5050      | pgAdmin  | web UI for browsing Postgres                 |
 | localhost:8000      | FastAPI  | backend API (token check + tenant scope)     |
-| localhost:3000      | Next.js  | frontend (later)                             |
+| localhost:5173      | Cloud Portal | Vite + React frontend (dev server)       |
 
 ## Backend API (step 4)
 
@@ -60,6 +75,7 @@ Endpoints (all require `Authorization: Bearer <token>`):
 | Method | Path         | Purpose                                                    |
 |--------|--------------|------------------------------------------------------------|
 | GET    | `/me`        | identity summary (user, email, tenant from org claim)      |
+| GET    | `/tenant`    | caller's tenant display info (name, tagline, theme color)  |
 | GET/POST | `/customers` | list / create customers of the caller's tenant only       |
 | GET/POST | `/orders`    | list / create orders of the caller's tenant only          |
 
@@ -87,8 +103,9 @@ user `keycloak`, password from `.env`.
 - [x] Step 2: Organizations (Company A / B) + test users + app clients in Keycloak
 - [x] Step 3: App database with tenant_id + Row-Level Security
 - [x] Step 4: FastAPI backend validating tokens, applying tenant scope
-- [ ] Step 5: Next.js frontend with per-company branding
-- [ ] Step 6: Claude AI agent with tenant-scoped tools
+- [x] Step 5: Frontend portal (Vite + React) with per-company branding —
+      runtime step remaining: one-time Keycloak public client (see Local setup)
+- [ ] Step 6: Agentic chat composer — planned in detail in [PLAN.md](PLAN.md)
 - [ ] Step 7: Automated cross-tenant isolation tests
 - [ ] Step 8: Deployment, billing, admin pages
 
