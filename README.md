@@ -61,7 +61,7 @@ user `keycloak`, password from `.env`.
 ## Roadmap
 
 - [x] Step 1: Keycloak + Postgres via Docker Compose
-- [ ] Step 2: Organizations (Company A / B) + test users in Keycloak
+- [x] Step 2: Organizations (Company A / B) + test users + app clients in Keycloak
 - [ ] Step 3: App database with tenant_id + Row-Level Security
 - [ ] Step 4: FastAPI backend validating tokens, applying tenant scope
 - [ ] Step 5: Next.js frontend with per-company branding

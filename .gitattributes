@@ -1,0 +1,2 @@
+# bash scripts must keep LF endings (Docker init scripts run inside Linux containers)
+*.sh text eol=lf
