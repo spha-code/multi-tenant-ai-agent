@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16   # Postgres 16 + pgvector (embeddings) preinstalled
     container_name: app_postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -36,6 +36,19 @@ services:
       KC_HOSTNAME_STRICT: "false"
     ports:
       - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Web UI for browsing Postgres at http://localhost:5050
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: app_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
     depends_on:
       postgres:
         condition: service_healthy
