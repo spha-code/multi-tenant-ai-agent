@@ -1,5 +1,9 @@
 # Frontend Build Plan — multi-tenant-ai-portal
 
+> **Status:** Phases 1–4 implemented on branch `feat/frontend-portal`
+> (commit `aa1f728`). Phase 5 is a runtime verification, and the Keycloak
+> public client is the one manual setup step remaining.
+
 A web frontend ("Cloud Portal") for the existing FastAPI backend: Keycloak OIDC
 login, tenant-scoped Customers and Orders, and proof that each user only sees
 their own organization's data.
@@ -26,45 +30,50 @@ their own organization's data.
 - Design: clean typography, one accent color, generous spacing, rounded
   corners, subtle shadows — beautiful through restraint, not complexity.
 
-## Phase 1 — Scaffold & wiring
+## Phase 1 — Scaffold & wiring ✅
 
-1. Create `frontend/` (Vite React-TS template)
-2. `frontend/Dockerfile` (`npm run dev -- --host`) + `frontend/.dockerignore`
-3. `docker-compose.yml`: add `frontend` service — `5173:5173`, bind-mount
+1. ✅ Create `frontend/` (Vite React-TS template)
+2. ✅ `frontend/Dockerfile` (`npm run dev -- --host`) + `frontend/.dockerignore`
+3. ✅ `docker-compose.yml`: add `frontend` service — `5173:5173`, bind-mount
    `./frontend:/app`, `VITE_*` environment variables
-4. Backend: add CORS middleware allowing origin `http://localhost:5173`
-5. Extend `.env.example`: `VITE_API_BASE_URL`, `VITE_OIDC_AUTHORITY`,
-   `VITE_OIDC_CLIENT_ID`
+4. ✅ Backend: CORS middleware driven by `CORS_ORIGINS` (default `http://localhost:5173`)
+5. ✅ Extend `.env.example`: `VITE_API_BASE_URL`, `VITE_OIDC_AUTHORITY`,
+   `VITE_OIDC_CLIENT_ID`, `CORS_ORIGINS`
 
-## Phase 2 — Auth
+## Phase 2 — Auth ✅
 
-6. `src/auth/` — OIDC login, redirect callback, silent renewal, logout
-7. **One manual step (user):** create Keycloak **public client**
-   `cloud-portal-frontend` in the `ai-portal` realm, redirect `http://localhost:5173/*`.
-   Exact admin-console steps provided, or a realm-import JSON on request
-8. 401 → automatic re-login redirect; 403 → friendly
+6. ✅ `src/auth/` — OIDC login, redirect callback, silent renewal, logout
+7. ⏳ **Manual step (user):** create Keycloak **public client**
+   `cloud-portal-frontend` in the `ai-portal` realm, redirect `http://localhost:5173/*`
+   (Clients → Create client → authentication OFF, standard flow ON,
+   redirect `http://localhost:5173/*`, web origin `http://localhost:5173`)
+8. ✅ 401 → automatic re-login redirect; 403 → friendly
    "not a member of any organization" screen
 
-## Phase 3 — App shell & API layer
+## Phase 3 — App shell & API layer ✅
 
-9. Layout: sidebar (Orders / Customers / Profile); header shows tenant name
-   (from `GET /me`), user email, logout button
-10. `src/api/` — typed endpoints for `/me`, `/customers`, `/orders`; Zod
-    response validation
+9. ✅ Layout: sidebar (Orders / Customers / Profile); tenant **display name,
+   tagline and theme color** come from a new `GET /tenant` endpoint
+   (the `tenants`/`tenant_settings` tables already have read-all RLS policies),
+   user email from `GET /me`, logout one click away
+10. ✅ `src/api/` — typed endpoints for `/me`, `/tenant`, `/customers`,
+    `/orders` with Zod response validation
 
-## Phase 4 — Pages
+## Phase 4 — Pages ✅
 
-11. **Login** — redirects to Keycloak
-12. **Customers** — table (name, email, created) + "Add customer" modal
+11. ✅ **Login** — redirects to Keycloak (callback at `/auth/callback`)
+12. ✅ **Customers** — table (name, email, created) + "Add customer" modal
     (name, email)
-13. **Orders** — table (title, amount, status, customer, date) + create form
-    with customer dropdown (maps list email → `customer_email`)
-14. Loading / empty / error states for all pages
+13. ✅ **Orders** — table (title, amount, status badge, customer, date) +
+    create form with customer dropdown (maps list email → `customer_email`)
+14. ✅ Loading / empty / error states for all pages
 
-## Phase 5 — Verify the multi-tenancy story
+## Phase 5 — Verify the multi-tenancy story ⏳ (verify at runtime)
 
-15. Log in as users from two different organizations; each sees only their
-    tenant's data — the UI-level proof of the Postgres RLS guarantee
+15. ⏳ Log in as users from two different organizations (`companya` /
+    `companyb` members); each sees only their tenant's data — the UI-level
+    proof of the Postgres RLS guarantee. Factory reset requires a *fresh*
+    postgres volume: `docker compose down -v` before first `docker compose up`.
 
 ## Later implementation (tracked, not forgotten)
 
