@@ -41,7 +41,12 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
    ```
 
 3. Verify Keycloak is up: open http://localhost:8080 and log into the
-   Administration Console (admin / admin from `.env`).
+   Administration Console (credentials from `.env`).
+
+   > **Fresh machine?** On a new volume Keycloak starts **empty** — the
+   > `ai-portal` realm (organizations, test users, clients) exists only in
+   > the machine where the stack was first set up. Capture it once and
+   > commit it back: see [docs/KEYCLOAK-REALM-CAPTURE.md](docs/KEYCLOAK-REALM-CAPTURE.md).
 
 4. **One-time Keycloak setup for the frontend** (public client for the
    browser app, PKCE flow):
@@ -108,6 +113,12 @@ user `keycloak`, password from `.env`.
 - [ ] Step 6: Agentic chat composer — planned in detail in [PLAN.md](PLAN.md)
 - [ ] Step 7: Automated cross-tenant isolation tests
 - [ ] Step 8: Deployment, billing, admin pages
+        (Kubernetes migration groundwork: [PLAN-K8S.md](PLAN-K8S.md))
+
+See also: [PLAN.md](PLAN.md) (agentic chat composer),
+[PLAN-K8S.md](PLAN-K8S.md) (local Kubernetes learning plan),
+[docs/KEYCLOAK-REALM-CAPTURE.md](docs/KEYCLOAK-REALM-CAPTURE.md)
+(one-time Keycloak realm capture runbook).
 
 ## Handy commands
 
