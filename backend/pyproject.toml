@@ -11,6 +11,6 @@ dependencies = [
     "httpx>=0.28.1,<0.29",         # HTTP client (fetches JWKS from Keycloak)
     "uvicorn[standard]>=0.54,<0.55", # ASGI server
     "psycopg[binary,pool]>=3.3.8,<3.4", # Postgres driver + connection pool
-    "pyjwt>=2.15,<3",              # JWT decode/signature check
+    "pyjwt>=2.15.1,<3",              # JWT decode/signature check
     "cryptography>=50.0.2,<51",    # RSA keys used by PyJWT (min raised for CVE fixes)
 ]
