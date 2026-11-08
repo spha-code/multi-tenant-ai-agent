@@ -9,7 +9,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115,<0.116",       # web framework
     "httpx>=0.27,<0.28",           # HTTP client (fetches JWKS from Keycloak)
-    "uvicorn[standard]>=0.32,<0.33", # ASGI server
+    "uvicorn[standard]>=0.54.0,<0.55", # ASGI server
     "psycopg[binary,pool]>=3.2,<3.3", # Postgres driver + connection pool
     "pyjwt>=2.9,<3",               # JWT decode/signature check
     "cryptography>=43,<44",        # RSA keys used by PyJWT to verify signatures
