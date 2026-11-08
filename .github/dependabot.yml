@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # weekly PRs when new frontend versions exist (audit advisories included)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+  # backend: pyproject.toml + uv.lock
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
