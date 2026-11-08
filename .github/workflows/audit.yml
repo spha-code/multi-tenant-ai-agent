@@ -1,0 +1,25 @@
+# Security audit on every PR.
+# NOTE: intentionally strict — this starts RED (see branch PR description):
+# frontend currently has a known HIGH (zod <4.6.6) pending the planned
+# upgrade chore, and the workflow blocks MERGE on it until fixed.
+name: audit
+
+on: [pull_request]
+
+jobs:
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # ci-style check: lockfile must satisfy package.json, else fail fast
+      - run: npm ci --dry-run && npm audit --audit-level=high
+        working-directory: frontend
+
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install uv
+      # frozen sync from uv.lock, then audit the resolved environment
+      - run: uv sync --frozen --no-dev && uv run --with pip-audit pip-audit
+        working-directory: backend
