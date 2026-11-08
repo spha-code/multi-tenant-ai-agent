@@ -12,5 +12,5 @@ dependencies = [
     "uvicorn[standard]>=0.32,<0.33", # ASGI server
     "psycopg[binary,pool]>=3.2,<3.3", # Postgres driver + connection pool
     "pyjwt>=2.9,<3",               # JWT decode/signature check
-    "cryptography>=43,<44",        # RSA keys used by PyJWT to verify signatures
+    "cryptography>=50.0.2,<51",        # RSA keys used by PyJWT to verify signatures
 ]
