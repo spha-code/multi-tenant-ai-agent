@@ -43,25 +43,13 @@ Prerequisites: Docker Desktop (WSL2) installed and running.
 3. Verify Keycloak is up: open http://localhost:8080 and log into the
    Administration Console (credentials from `.env`).
 
-   > **Fresh machine?** On a new volume Keycloak starts **empty** — the
-   > `ai-portal` realm (organizations, test users, clients) exists only in
-   > the machine where the stack was first set up. Capture it once and
-   > commit it back: see [docs/KEYCLOAK-REALM-CAPTURE.md](docs/KEYCLOAK-REALM-CAPTURE.md).
+   > **Fresh machine?** The `ai-portal` realm (organizations, test users,
+   > clients, mappers) is committed in the repo
+   > (`keycloak/ai-portal-realm.json` + `ai-portal-users-0.json`) and is
+   > imported automatically on first boot via `--import-realm` — no manual
+   > Keycloak setup needed. Log in with the test users below.
 
-4. **One-time Keycloak setup for the frontend** (public client for the
-   browser app, PKCE flow):
-
-   - **Clients → Create client**: `cloud-portal-frontend`,
-     authentication OFF (public), standard flow ON
-   - Valid redirect URIs: `http://localhost:5173/*`;
-     web origins: `http://localhost:5173`
-   - **Audience mapper** (required, or the backend rejects every token):
-     Clients → `cloud-portal-frontend` → Client scopes →
-     `cloud-portal-frontend-dedicated` → Mappers → Add →
-     configuration → Audience → Included Client Audience:
-     `cloud-portal-backend`
-
-5. Open the portal at http://localhost:5173 and log in with an organization member.
+4. Open the portal at http://localhost:5173 and log in with an organization member.
 
 ## Services & ports
 
@@ -108,8 +96,7 @@ user `keycloak`, password from `.env`.
 - [x] Step 2: Organizations (Company A / B) + test users + app clients in Keycloak
 - [x] Step 3: App database with tenant_id + Row-Level Security
 - [x] Step 4: FastAPI backend validating tokens, applying tenant scope
-- [x] Step 5: Frontend portal (Vite + React) with per-company branding —
-      runtime step remaining: one-time Keycloak public client (see Local setup)
+- [x] Step 5: Frontend portal (Vite + React) with per-company branding
 - [ ] Step 6: Agentic chat composer — planned in detail in [PLAN.md](PLAN.md)
 - [ ] Step 7: Automated cross-tenant isolation tests
 - [ ] Step 8: Deployment, billing, admin pages
