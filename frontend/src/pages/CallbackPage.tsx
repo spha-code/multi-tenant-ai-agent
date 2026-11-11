@@ -3,15 +3,37 @@ import { useNavigate } from "react-router-dom";
 import { userManager } from "../auth/userManager";
 import { EmptyState, FullLoading } from "../components/States";
 
-/** Keycloak redirects here with the auth code; we finish the PKCE exchange. */
+/**
+ * Keycloak redirects here with the auth code; we finish the PKCE exchange.
+ *
+ * The auth code is single-use, so it must be redeemed exactly once. React
+ * StrictMode double-invokes effects in development, which would otherwise
+ * exchange the same code twice and fail with "Code not valid" (invalid_code).
+ * Memoising the in-flight promise makes the second invocation await the first.
+ */
+let signInCallback: Promise<void> | null = null;
+
+function completeSignIn(): Promise<void> {
+  if (!signInCallback) {
+    signInCallback = userManager.signinRedirectCallback().then(
+      () => undefined,
+      (err) => {
+        // Allow a retry if the exchange genuinely failed.
+        signInCallback = null;
+        throw err;
+      },
+    );
+  }
+  return signInCallback;
+}
+
 export default function CallbackPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
-    userManager
-      .signinRedirectCallback()
+    completeSignIn()
       .then(() => {
         if (alive) navigate("/", { replace: true });
       })
