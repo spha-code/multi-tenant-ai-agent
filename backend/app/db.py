@@ -20,7 +20,7 @@ pool = ConnectionPool(
     conninfo=(
         f"host={config.APP_DB_HOST} port={config.APP_DB_PORT} "
         f"dbname={config.APP_DB_NAME} user={config.APP_DB_USER} "
-        f"password={config.APP_DB_PASSWORD} application_name=cloud-portal-backend"
+        f"password={config.APP_DB_PASSWORD} application_name=ai-portal-backend"
     ),
     open=False,          # opened explicitly in app startup (lifespan)
     max_size=10,         # reused across requests; set_config(true) keeps them clean

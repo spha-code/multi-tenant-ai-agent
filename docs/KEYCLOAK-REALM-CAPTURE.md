@@ -17,7 +17,7 @@
 ## Step 1 — Audit (one-time, machine with realm data)
 
 Walk the admin console (http://localhost:8080) and record:
-realm settings, clients (`cloud-portal-frontend`, `cloud-portal-backend`,
+realm settings, clients (`ai-portal-frontend`, `ai-portal-backend`,
 `poc-client`) + the audience mapper config, Organizations + members,
 test users and their credential state. Put findings into the repo doc
 (or refine this file) — the audit doc is the human-review layer.

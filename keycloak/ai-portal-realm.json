@@ -249,8 +249,8 @@
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
       "poc-client" : [ ],
-      "cloud-portal-backend" : [ ],
-      "cloud-portal-frontend" : [ ],
+      "ai-portal-backend" : [ ],
+      "ai-portal-frontend" : [ ],
       "account-console" : [ ],
       "broker" : [ {
         "id" : "2ae777b4-8052-47d1-9ebd-87ec925ca94d",
@@ -519,7 +519,7 @@
     "optionalClientScopes" : [ "address", "phone", "organization", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "5ab5cc86-bb95-46bd-84d2-bc14d79cf488",
-    "clientId" : "cloud-portal-backend",
+    "clientId" : "ai-portal-backend",
     "name" : "Cloud Portal Backend",
     "description" : "Cloud Portal Backend",
     "rootUrl" : "",
@@ -558,7 +558,7 @@
     "optionalClientScopes" : [ "address", "phone", "organization", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "37940598-bc58-4a4b-95f2-9bcd933f2fa3",
-    "clientId" : "cloud-portal-frontend",
+    "clientId" : "ai-portal-frontend",
     "name" : "Cloud Portal Frontend",
     "description" : "Cloud Portal Frontend",
     "rootUrl" : "http://localhost:5173",
@@ -616,7 +616,7 @@
       "protocolMapper" : "oidc-audience-mapper",
       "consentRequired" : false,
       "config" : {
-        "included.client.audience" : "cloud-portal-backend",
+        "included.client.audience" : "ai-portal-backend",
         "id.token.claim" : "false",
         "access.token.claim" : "true"
       }
@@ -657,7 +657,7 @@
       "protocolMapper" : "oidc-audience-mapper",
       "consentRequired" : false,
       "config" : {
-        "included.client.audience" : "cloud-portal-backend",
+        "included.client.audience" : "ai-portal-backend",
         "id.token.claim" : "false",
         "access.token.claim" : "true"
       }

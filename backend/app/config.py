@@ -22,7 +22,7 @@ JWKS_URL = os.environ.get(
     "http://keycloak:8080/realms/ai-portal/protocol/openid-connect/certs",
 )
 # Tokens are only accepted if "aud" contains the backend client id.
-TOKEN_AUDIENCE = os.environ.get("TOKEN_AUDIENCE", "cloud-portal-backend")
+TOKEN_AUDIENCE = os.environ.get("TOKEN_AUDIENCE", "ai-portal-backend")
 
 # How long (seconds) we cache Keycloak's public keys before refreshing.
 JWKS_CACHE_TTL = int(os.environ.get("JWKS_CACHE_TTL", "300"))

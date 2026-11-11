@@ -45,7 +45,7 @@ their own organization's data.
 
 6. ✅ `src/auth/` — OIDC login, redirect callback, silent renewal, logout
 7. ⏳ **Manual step (user):** create Keycloak **public client**
-   `cloud-portal-frontend` in the `ai-portal` realm, redirect `http://localhost:5173/*`
+   `ai-portal-frontend` in the `ai-portal` realm, redirect `http://localhost:5173/*`
    (Clients → Create client → authentication OFF, standard flow ON,
    redirect `http://localhost:5173/*`, web origin `http://localhost:5173`)
 8. ✅ 401 → automatic re-login redirect; 403 → friendly

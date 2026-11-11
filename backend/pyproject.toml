@@ -3,7 +3,7 @@
 # Version ranges mirror the old requirements.txt pins (patch-safe); the exact
 # resolved set lives in uv.lock.
 [project]
-name = "cloud-portal-backend"
+name = "ai-portal-backend"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [

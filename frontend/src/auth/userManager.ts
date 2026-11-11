@@ -4,7 +4,7 @@ export const OIDC_AUTHORITY =
   import.meta.env.VITE_OIDC_AUTHORITY ||
   "http://localhost:8080/realms/ai-portal";
 export const OIDC_CLIENT_ID =
-  import.meta.env.VITE_OIDC_CLIENT_ID || "cloud-portal-frontend";
+  import.meta.env.VITE_OIDC_CLIENT_ID || "ai-portal-frontend";
 
 /**
  * Public (browser) client, PKCE code flow. The backend stays the only place
