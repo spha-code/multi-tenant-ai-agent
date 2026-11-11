@@ -7,7 +7,7 @@ name = "ai-portal-backend"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi>=0.162.0,<1",           # web framework (min raised: pulls patched starlette)
+    "fastapi>=0.162.2,<1",           # web framework (min raised: pulls patched starlette)
     "httpx>=0.28.1,<0.29",         # HTTP client (fetches JWKS from Keycloak)
     "uvicorn[standard]>=0.54,<0.55", # ASGI server
     "psycopg[binary,pool]>=3.3.8,<3.4", # Postgres driver + connection pool
