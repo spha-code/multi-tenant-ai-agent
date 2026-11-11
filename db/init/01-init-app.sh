@@ -21,7 +21,7 @@ APP_DB="app_db"
 APP_USER="$POSTGRES_APP_USER"
 APP_PASS="$POSTGRES_APP_PASSWORD"
 
-ROLE_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '${APP_USER}'")
+ROLE_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '${APP_USER}'" --username "$POSTGRES_USER")
 if [ "$ROLE_EXISTS" != "1" ]; then
   psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" \
        -c "CREATE ROLE ${APP_USER} LOGIN PASSWORD '${APP_PASS}'"
@@ -31,7 +31,7 @@ fi
 # ---------------------------------------------------------------------
 # 2) The application database (only if missing).
 # ---------------------------------------------------------------------
-DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname = '${APP_DB}'")
+DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname = '${APP_DB}'" --username "$POSTGRES_USER")
 if [ "$DB_EXISTS" != "1" ]; then
   psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -c "CREATE DATABASE ${APP_DB} OWNER ${POSTGRES_USER}"
   echo "Created database ${APP_DB}"
